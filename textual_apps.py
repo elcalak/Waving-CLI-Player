@@ -2,8 +2,10 @@ from itertools import zip_longest
 from pathlib import Path
 from rich.console import Console
 from textual.app import App, ComposeResult
+from textual.containers import Horizontal
 from textual.widgets import DataTable, Footer
 from tinytag import TinyTag
+import audio_controls as ac
 
 class TableApp(App):
     
@@ -119,7 +121,16 @@ class TableApp(App):
 
     #End of function to build new colums
 
-    def update_table(self, folder: Path): #Start function to update the tables
+    def update_table(self, folder): #Start function to update the tables
+        
+        # keep track of current navigation folder
+        if folder == "Back...":
+      
+            self.current_path = Path.home() / "Music"
+      
+        else:
+      
+            self.current_path = Path.home() / "Music" / str(folder)
 
         rows = self.build_new_colums(folder) #get rows
         table = self.query_one(DataTable) #Create a table object
@@ -151,6 +162,11 @@ class TableApp(App):
 
         ROWS = self.data_tables()  #Call data_tables to get rows
 
+        # Initialize current path for resolving file selections
+        self.current_path = Path.home() / "Music"
+        # single audio controller for the app (prevents overlapping instances)
+        self.audio_control = ac.AudioControl()
+
         #Add colums
         table.add_column(ROWS[0][0], key="tree")
         table.add_column(ROWS[0][1], key="title")
@@ -173,6 +189,24 @@ class TableApp(App):
         if colum_index == 0: #If the colum index is 0 or folder
 
             self.update_table(row_value) #Call Update table metoth with the folder selected
+
+        elif colum_index == 1: #If the colum index is 1 or audio file
+
+            row_str = str(row_value) #Convert row_value in string
+            
+            # resolve full path using current navigation folder
+            base = getattr(self, "current_path", Path.home() / "Music")
+            full_path = base / row_str #Get the full path
+
+            if full_path.exists() and full_path.is_file(): #If path exist and is a file
+                
+                # use the single app-level audio controller so stop() works
+                self.audio_control.play(str(full_path)) #play the audio
+           
+            else: #Else
+           
+                console = Console() #Create a console object
+                console.print(f"[red]File not found:[/red] {full_path}") #Print error message
 
     #End of function to hear the selected cell
 
