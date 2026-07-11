@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.10 Safari/537.36" version="29.6.1">
   <diagram name="Page-1" id="zWe17Vd5yH4FhDQLfyig">
-    <mxGraphModel dx="2193" dy="856" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2254" dy="856" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -49,13 +49,13 @@
         <mxCell id="OQd2i5ha8iGjNUMGZEuS-15" edge="1" parent="1" source="OQd2i5ha8iGjNUMGZEuS-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="OQd2i5ha8iGjNUMGZEuS-14" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="OQd2i5ha8iGjNUMGZEuS-12" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Menu with textual" vertex="1">
+        <mxCell id="OQd2i5ha8iGjNUMGZEuS-12" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Menu with textual" vertex="1">
           <mxGeometry height="60" width="120" x="420" y="200" as="geometry" />
         </mxCell>
         <mxCell id="OQd2i5ha8iGjNUMGZEuS-19" edge="1" parent="1" source="OQd2i5ha8iGjNUMGZEuS-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="OQd2i5ha8iGjNUMGZEuS-18" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="OQd2i5ha8iGjNUMGZEuS-14" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Main menu" vertex="1">
+        <mxCell id="OQd2i5ha8iGjNUMGZEuS-14" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Main menu" vertex="1">
           <mxGeometry height="60" width="120" x="420" y="280" as="geometry" />
         </mxCell>
         <mxCell id="OQd2i5ha8iGjNUMGZEuS-29" edge="1" parent="1" source="OQd2i5ha8iGjNUMGZEuS-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="OQd2i5ha8iGjNUMGZEuS-27" value="">
@@ -85,7 +85,7 @@
         <mxCell id="OQd2i5ha8iGjNUMGZEuS-57" edge="1" parent="1" source="OQd2i5ha8iGjNUMGZEuS-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="OQd2i5ha8iGjNUMGZEuS-56" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="OQd2i5ha8iGjNUMGZEuS-34" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Play" vertex="1">
+        <mxCell id="OQd2i5ha8iGjNUMGZEuS-34" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Play" vertex="1">
           <mxGeometry height="60" width="120" x="-10" y="280" as="geometry" />
         </mxCell>
         <mxCell id="OQd2i5ha8iGjNUMGZEuS-45" edge="1" parent="1" source="OQd2i5ha8iGjNUMGZEuS-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="OQd2i5ha8iGjNUMGZEuS-40" value="">
@@ -94,10 +94,10 @@
         <mxCell id="OQd2i5ha8iGjNUMGZEuS-46" edge="1" parent="1" source="OQd2i5ha8iGjNUMGZEuS-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="OQd2i5ha8iGjNUMGZEuS-38" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="OQd2i5ha8iGjNUMGZEuS-36" parent="1" style="whiteSpace=wrap;html=1;rounded=1;" value="Pause" vertex="1">
+        <mxCell id="OQd2i5ha8iGjNUMGZEuS-36" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Pause" vertex="1">
           <mxGeometry height="60" width="120" x="-150" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="OQd2i5ha8iGjNUMGZEuS-38" parent="1" style="whiteSpace=wrap;html=1;rounded=1;" value="Resume" vertex="1">
+        <mxCell id="OQd2i5ha8iGjNUMGZEuS-38" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Resume" vertex="1">
           <mxGeometry height="60" width="120" x="-150" y="360" as="geometry" />
         </mxCell>
         <mxCell id="OQd2i5ha8iGjNUMGZEuS-48" edge="1" parent="1" source="OQd2i5ha8iGjNUMGZEuS-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="OQd2i5ha8iGjNUMGZEuS-38">
@@ -110,7 +110,7 @@
         <mxCell id="OQd2i5ha8iGjNUMGZEuS-40" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Stop" vertex="1">
           <mxGeometry height="60" width="120" x="-290" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="OQd2i5ha8iGjNUMGZEuS-51" parent="1" style="whiteSpace=wrap;html=1;rounded=1;" value="Playlist" vertex="1">
+        <mxCell id="OQd2i5ha8iGjNUMGZEuS-51" parent="1" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Playlist" vertex="1">
           <mxGeometry height="60" width="120" x="130" y="200" as="geometry" />
         </mxCell>
         <mxCell id="OQd2i5ha8iGjNUMGZEuS-59" edge="1" parent="1" source="OQd2i5ha8iGjNUMGZEuS-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="OQd2i5ha8iGjNUMGZEuS-58" value="">

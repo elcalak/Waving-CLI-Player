@@ -1,6 +1,6 @@
-import miniaudio as ma
-import threading
-import time
+import miniaudio as ma #Import miniaudio as ma to control audio and metadata
+import threading #import threading to control the status
+import time #Import time
 
 class AudioControl(): #Start AudioControl class
 
@@ -8,8 +8,12 @@ class AudioControl(): #Start AudioControl class
 
         self._thread = None #Create a thread
         self._stop_event = threading.Event() #Create stop event
+        self._pause_event = threading.Event() #Create pause event
         self._device = None #Create device
         self._device_lock = threading.Lock() #Create lock device
+        self._on_finished_callback = None #Create callback for when song finishes
+        self._elapsed_time = 0 #Track elapsed time for pause/resume
+        self._pause_time = 0 #Track when pause started
 
     #End of constructor
 
@@ -34,8 +38,36 @@ class AudioControl(): #Start AudioControl class
                 duration = info.duration or 0
                 start = time.time()
 
-                while not self._stop_event.is_set() and (time.time() - start) < duration: #While not stop event is active and the song is end
+                while not self._stop_event.is_set() and (time.time() - start + self._elapsed_time) < duration: #While not stop event is active and the song is end
 
+                    if self._pause_event.is_set(): #If pause is requested
+
+                        try:
+
+                            device.stop() #Stop device while paused
+
+                        except Exception:
+
+                            pass
+
+                        self._pause_time = time.time()
+
+                        while self._pause_event.is_set() and not self._stop_event.is_set(): #While paused
+
+                            time.sleep(0.1)
+
+                        if not self._stop_event.is_set(): #If not stopped, resume
+
+                            self._elapsed_time += time.time() - self._pause_time
+
+                            try:
+
+                                device.start(stream) #Restart playback
+
+                            except Exception:
+
+                                pass
+                    
                     time.sleep(0.1) #Sleep a moment
 
                 try: #Start try to stop
@@ -47,6 +79,10 @@ class AudioControl(): #Start AudioControl class
                     pass #Pass
 
                 #End try to stop
+                
+                # Call the callback when song finishes (only if not manually stopped)
+                if not self._stop_event.is_set() and self._on_finished_callback:
+                    self._on_finished_callback()
 
         finally: #Finally
 
@@ -67,6 +103,8 @@ class AudioControl(): #Start AudioControl class
             self.stop() #Stop the music
 
         self._stop_event.clear() #Clear stop event
+        self._pause_event.clear() #Clear pause event
+        self._elapsed_time = 0 #Reset elapsed time
         self._thread = threading.Thread(target=self._play_thread, args=(file,), daemon=True) #Use the event play
         self._thread.start() #Start play
 
@@ -98,3 +136,23 @@ class AudioControl(): #Start AudioControl class
         self._thread = None #Event is none
 
     #End of stop function
+
+    def pause(self) -> None: #Pause the audio
+        
+        self._pause_event.set() #Set pause event
+
+    #End pause function
+
+    def resume(self) -> None: #Resume the audio
+        
+        self._pause_event.clear() #Clear pause event
+
+    #End resume function
+
+    def set_finished_callback(self, callback): #Set callback for when song finishes
+        
+        self._on_finished_callback = callback #Store the callback
+
+    #End set callback
+
+#End of AudioControl class
