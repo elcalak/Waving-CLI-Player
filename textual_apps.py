@@ -1,20 +1,48 @@
+"""
+This file controls the textual application, browsing and loading audio files
+
+Develovment by: Calak de Astora
+
+"""
+
 import io #Import library of input output
 from itertools import zip_longest #Import zip_longest from itertools to len many tuples at same time
 from pathlib import Path #Import Path from pathlib to control files directories
 from PIL import Image #Import image form Pillow
 from rich_pixels import Pixels #Import Pixels from rich pixels to reduce an image
-from textual.app import App, ComposeResult #Import app and compose result from textual.app to mount the app 
-from textual.containers import Vertical, Horizontal #Import vertical and horizontal from textual.containers to stylice Menu
-from textual.widgets import DataTable, Button, Footer #Import DataTable, button and footer from textual.widgets to use tables and buttons
+#Import app and compose result from textual.app to mount the app
+from textual.app import App, ComposeResult
+#Import vertical and horizontal from textual.containers to stylice Menu
+from textual.containers import Vertical, Horizontal
+ #Import DataTable, button and footer from textual.widgets to use tables and buttons
+from textual.widgets import DataTable, Button, Footer
 from tinytag import TinyTag #Import TinyTag to get metadata
 import audio_controls as ac #Import audio_controls file to control audio
 
 class TableApp(App):
-    
+    """
+
+    Create textual application based on tables, for browsing and playing local audio files.
+
+    Displays a Music folder tree and audio files in a data table, with a
+    separate player pane for current track metadata and playback controls.
+
+    """
+
     def data_tables(self): #Start function to add default data to tables
 
+        """
+
+        Build the main menu rows from the user's Music folder.
+
+        Scans the home Music directory for folders and supported audio files.
+        Returns a list of rows including a header row and any discovered
+        directories or audio files with duration data and source labels.
+
+        """
+
         rows = [("Tree", "Title", "Duration", "Source")] #Initialize rows with header
-        
+
         path = Path.home() / "Music" #Search the path "Music" in home
 
         if not path.exists(): #If the path dont exist
@@ -46,7 +74,8 @@ class TableApp(App):
 
                     folders.append(item.name) #Add folder to list
 
-                elif item.is_file() and item.suffix.lower() in audio_types: #If element is a file and is compatible with audio_types
+                #If element is a file and is compatible with audio_types
+                elif item.is_file() and item.suffix.lower() in audio_types:
 
                     tag = TinyTag.get(item) #Create a object tag to get tags form element
                     duration_seconds = tag.duration or 0 #Save the duration
@@ -60,7 +89,7 @@ class TableApp(App):
 
             #Add folders, audio files, durations, sources to rows
             rows = list(zip_longest(folders, audio_files, durations, sources, fillvalue=""))
-        
+
         rows.insert(0, ("Tree", "Title", "Duration", "Source"))  #Add header in position 0
 
         return rows #Return rows to use in on_mount
@@ -68,6 +97,16 @@ class TableApp(App):
     #End of function to add default data to tables
 
     def build_new_colums(self, folder): #Start function to build new colums
+
+        """
+        
+        Generate table rows for a selected folder or the Music root.
+
+        If the folder is "Back...", this returns the root Music listing.
+        Otherwise it scans the selected subfolder and includes a back entry.
+        Returns rows with folder names, audio file titles, durations, and sources.
+
+        """
 
         audio_types = ['.mp3', '.wav', '.flac'] #Save the audio compatible types
 
@@ -99,7 +138,8 @@ class TableApp(App):
 
                     folders.append(item.name) #Add folder to list
 
-                elif item.is_file() and item.suffix.lower() in audio_types: #If element is a file and is compatible with audio_types
+                #If element is a file and is compatible with audio_types
+                elif item.is_file() and item.suffix.lower() in audio_types:
 
                     tag = TinyTag.get(item) #Create a object tag to get tags form element
                     duration_seconds = tag.duration or 0 #Save the duration
@@ -113,7 +153,7 @@ class TableApp(App):
 
             #Add folders, audio files, durations, sources to rows
             rows = list(zip_longest(folders, audio_files, durations, sources, fillvalue=""))
-        
+
         rows.insert(0, ("Tree", "Title", "Duration", "Source"))  #Add header in position 0
 
         return rows #Return rows to use in update_table
@@ -121,14 +161,23 @@ class TableApp(App):
     #End of function to build new colums
 
     def update_table(self, folder): #Start function to update the tables
-        
+
+        """
+
+        Update the main menu table for the given folder selection.
+
+        Sets the current navigation path, rebuilds the row data, clears the
+        main table, defines columns if needed, and populates the table rows.
+
+        """
+
         # keep track of current navigation folder
         if folder == "Back...":
-      
+
             self.current_path = Path.home() / "Music" #Set home path
-      
+
         else: #Else
-      
+
             self.current_path = Path.home() / "Music" / str(folder) #Set new path
 
         rows = self.build_new_colums(folder) #get rows
@@ -136,7 +185,7 @@ class TableApp(App):
 
         table.clear() #Clear the table
 
-        if not table.columns: #If the table dont have colums 
+        if not table.columns: #If the table dont have colums
 
             #Add colums
             table.add_column(rows[0][0], key="tree")
@@ -149,6 +198,16 @@ class TableApp(App):
     #End function to update the tables
 
     def player_table_fill(self, folder, name): #Start funtcion to fill player menu
+
+        """
+
+        Populate the player menu with metadata for the selected track.
+
+        Reads the track duration and optional cover image from the audio file.
+        Then updates the player table display with an image/icon, track name,
+        and formatted duration.
+
+        """
 
         table = self.query_one("#player_menu_table", DataTable) #Create a table object
         image_file = None #Create a image file container
@@ -178,14 +237,14 @@ class TableApp(App):
             img_pil = img_pil.resize((50, 50)) #Resize the image
 
             render = Pixels.from_image(img_pil) #Render the image
-        
+
         else: #Else
-            
+
             render = "🎵" #Render show "🎵"
 
         row = (render, name, duration_str) #Build the rows
 
-        if not table.columns: #If the table dont have colums 
+        if not table.columns: #If the table dont have colums
 
             #Add colums to player menu
             table.add_column("Image")
@@ -199,6 +258,15 @@ class TableApp(App):
 
     def compose(self) -> ComposeResult: #Start function to compose App
 
+        """
+
+        Define the layout of the textual application.
+
+        Creates the main menu table, player menu table, control buttons, and
+        footer inside a vertical layout with the buttons arranged horizontally.
+
+        """
+
         with Vertical(): #Put the tables in vertical
 
             yield DataTable(id = "main_menu_table") #Call data table to main menu table
@@ -210,13 +278,23 @@ class TableApp(App):
                 yield Button("⏸", id = "pause_button") #Call button to pause
                 yield Button("▶", id = "play_button") #Call button to play
                 yield Button("⏭", id = "next_button") #Call button to next
-                yield Button("Clear Playlist", id = "clear") #Call button to clear
+                yield Button("Clear", id = "clear") #Call button to clear
 
         yield Footer() #Call Footer
 
     #End function to compose app
 
     def on_mount(self) -> None: #Start funtion to mount app
+
+        """
+
+        Initialize the app state when the application mounts.
+
+        Configures button styles, hides player UI elements, loads the initial
+        music listing, initializes audio control and playlist state, and fills
+        the main menu table with its initial rows.
+
+        """
 
         table = self.query_one("#main_menu_table", DataTable) #Create a object table
         table_2 = self.query_one("#player_menu_table", DataTable) #Create a second object table
@@ -260,11 +338,21 @@ class TableApp(App):
 
     #End function to mount app
 
-    def on_data_table_cell_selected(self, event: DataTable.CellSelected) -> None: #Start function to hear the selected cell
+    #Start function to hear the selected cell
+    def on_data_table_cell_selected(self, event: DataTable.CellSelected) -> None:
+
+        """
+
+        Handle selection of a cell in the main data table.
+
+        When a folder cell is selected, navigates into that folder. When an audio
+        file cell is selected, loads the track into the playlist and starts
+        playback if the file exists.
+
+        """
 
         table = self.query_one("#main_menu_table", DataTable) #Create a object table
 
-        row_index = event.coordinate.row #Get the row index
         colum_index = event.coordinate.column #Get the colum index
 
         row_value = table.get_cell_at(event.coordinate) #Get the row value
@@ -273,10 +361,11 @@ class TableApp(App):
 
             self.update_table(row_value) #Call Update table metoth with the folder selected
 
-        elif colum_index == 1 and row_value != "No files found": #If the colum index is 1 or audio file
+        #If the colum index is 1 or audio file
+        elif colum_index == 1 and row_value != "No files found":
 
             row_str = str(row_value) #Convert row_value in string
-            
+
             # resolve full path using current navigation folder
             base = getattr(self, "current_path", Path.home() / "Music")
             full_path = base / row_str #Get the full path
@@ -288,15 +377,16 @@ class TableApp(App):
 
                 if self.playlist == [] and full_path_str not in self.playlist: #If playlist is empty
 
-                    player_table = self.query_one("#player_menu_table", DataTable) #Create a object table for the player
+                    #Create a object table for the player
+                    player_table = self.query_one("#player_menu_table", DataTable)
 
                     self.player_table_fill(str(full_path), row_str) #Fill the table
 
-                    player_table.styles.display = 'block' #Show the player menu table                
+                    player_table.styles.display = 'block' #Show the player menu table
 
                     self.query_one("#pause_button").styles.display = 'block' #Show the pause button
                     self.query_one("#next_button").styles.display = 'block' #Show the next button
-                    self.query_one("#prev_button").styles.display = 'block' #Show the previuos button
+                    self.query_one("#prev_button").styles.display = 'block'#Show the previuos button
                     self.query_one("#clear").styles.display = 'block' #Show clear button
 
                     self.playlist.append(full_path_str) #Add the song to the playlist
@@ -309,12 +399,21 @@ class TableApp(App):
                     self.playlist.append(full_path_str) #Add to playlist
 
             else: #Else
-           
+
                 self.notify("Error to load") #Error notify
 
     #End of function to hear the selected cell
 
     def on_button_pressed(self, event: Button.Pressed) -> None: #Start press button event
+
+        """
+
+        Respond to playback control button presses.
+
+        Handles pause, play, next, previous, and clear actions, updating button
+        visibility and controlling audio playback accordingly.
+
+        """
 
         if event.button.id == "pause_button": #If the pause button was presing
 
@@ -322,7 +421,7 @@ class TableApp(App):
             self.query_one("#play_button").styles.display = 'block' #Show the play button
             self.audio_control.pause() #Pause the audio
             self.is_paused = True #Mark as paused
-        
+
         elif event.button.id == "play_button": #If the play button was presing
 
             self.query_one("#play_button").styles.display = "none" #Hide the buttons
@@ -334,7 +433,8 @@ class TableApp(App):
 
             else: #If not paused, play from start
 
-                if self.playlist and self.current_index >= 0: #If the playlist and the current index isnt 0
+                #If the playlist and the current index isnt 0
+                if self.playlist and self.current_index >= 0:
 
                     self.audio_control.play(self.playlist[self.current_index]) #Play from resume
 
@@ -368,6 +468,15 @@ class TableApp(App):
 
     def _play_next(self) -> None: #Start play next song in playlist
 
+        """
+        
+        Advance playback to the next track in the playlist.
+
+        If the playlist is empty, notifies the user and returns. Otherwise advances
+        the current index and starts playback of the next song.
+
+        """
+
         if not self.playlist: #If the playlist is empty
 
             self.notify("Playlist is empty") #Notify the playlist empty
@@ -388,6 +497,15 @@ class TableApp(App):
 
     def _play_previous(self) -> None: #Play play previous song in playlist
 
+        """
+
+        Move playback to the previous track in the playlist.
+
+        If the playlist is empty, notifies the user and returns. Otherwise decrements
+        the current index and plays the previous song, wrapping to the end if needed.
+
+        """
+
         if not self.playlist: #If the playlist is empty
 
             self.notify("Playlist is empty") #Notify error
@@ -395,34 +513,51 @@ class TableApp(App):
             return #Return
 
         self.current_index -= 1 #Get previus index
-        
+
         if self.current_index < 0: #If the playlist index is 0
 
             self.current_index = len(self.playlist) - 1  #Loop to end
-        
+
         self.is_paused = False #Reset paused state
         self._play_current_song() #Play the current index
 
     #End play previuos song event
 
     def _play_current_song(self) -> None: #Play the current song
-        
+
+        """
+
+        Play the currently selected song in the playlist.
+
+        Updates the player UI with the current track metadata and starts audio
+        playback for the current playlist index.
+
+        """
+
         if 0 <= self.current_index < len(self.playlist): #If the index is minus of 0
 
             song_path = self.playlist[self.current_index] #Get the path
             filename = Path(song_path).name #Get file name
-            
+
             self.player_table_fill(song_path, filename) #Update the player table menu
             self.audio_control.play(song_path) #Play current path
-            
+
             self.query_one("#pause_button").styles.display = 'block' #Show pause button
             self.query_one("#play_button").styles.display = 'none' #Hide play button
-            self.query_one("#player_menu_table").styles.display = 'block' #Show the player table menu
+            self.query_one("#player_menu_table").styles.display = 'block'#Show the player table menu
 
     #End play current song event
 
     def _on_song_finished(self) -> None: #Called when song finishes
-        
+
+        """
+
+        Callback invoked when the current song finishes playback.
+
+        Schedules playback of the next track on the main application thread.
+
+        """
+
         # Use call_later to schedule this on the main thread (callback is from audio thread)
         self.call_later(self._play_next)
 

@@ -1,10 +1,33 @@
-import miniaudio as ma #Import miniaudio as ma to control audio and metadata
+"""
+
+This file controls the audio files using miniaudio
+
+Develovment by: Calak de Astora
+
+"""
+
 import threading #import threading to control the status
 import time #Import time
+import miniaudio as ma #Import miniaudio as ma to control audio and metadata
 
 class AudioControl(): #Start AudioControl class
 
+    """
+
+    Control audio playback using a background thread and miniaudio.
+
+    Supports playing, pausing, resuming, and stopping audio files while tracking
+    playback progress and invoking a completion callback when a track finishes.
+
+    """
+
     def __init__(self): #Start constructor
+
+        """
+
+        Initialize playback state and synchronization primitives.
+
+        """
 
         self._thread = None #Create a thread
         self._stop_event = threading.Event() #Create stop event
@@ -19,9 +42,16 @@ class AudioControl(): #Start AudioControl class
 
     def _play_thread(self, file: str): #Start play event
 
-        info = ma.get_file_info(file) #Get info of the file
-        print(f"Playing: {info.nchannels} channels, {info.sample_rate} Hz, {info.duration:.1f}s") #Print info
+        """
 
+        Run playback in a dedicated thread for the given audio file.
+
+        Manages miniaudio device lifecycle, handles pause/resume state, and
+        signals completion with the configured callback when playback ends.
+
+        """
+
+        info = ma.get_file_info(file) #Get info of the file
         stream = ma.stream_file(file) #Save the file to play
 
         try: #Start try play
@@ -67,7 +97,7 @@ class AudioControl(): #Start AudioControl class
                             except Exception:
 
                                 pass
-                    
+
                     time.sleep(0.1) #Sleep a moment
 
                 try: #Start try to stop
@@ -79,7 +109,7 @@ class AudioControl(): #Start AudioControl class
                     pass #Pass
 
                 #End try to stop
-                
+
                 # Call the callback when song finishes (only if not manually stopped)
                 if not self._stop_event.is_set() and self._on_finished_callback:
                     self._on_finished_callback()
@@ -95,39 +125,54 @@ class AudioControl(): #Start AudioControl class
     #End of play event
 
     def play(self, file: str) -> None: #Start play function
-        
+
+        """
+
+        Start playback of the specified audio file.
+
+        Stops any currently playing track, resets pause state, and launches the
+        playback thread for the new file.
+
+        """
+
         # If already playing, stop current and start new
-        
         if self._thread and self._thread.is_alive():
-        
+
             self.stop() #Stop the music
 
         self._stop_event.clear() #Clear stop event
         self._pause_event.clear() #Clear pause event
         self._elapsed_time = 0 #Reset elapsed time
-        self._thread = threading.Thread(target=self._play_thread, args=(file,), daemon=True) #Use the event play
+        #Use the event play
+        self._thread = threading.Thread(target=self._play_thread, args=(file,), daemon=True)
         self._thread.start() #Start play
 
     #End of play function
 
     def stop(self) -> None: #Start stop function
-        
+
+        """
+
+        Stop playback and wait for the playback thread to terminate.
+
+        """
+
         if self._thread and self._thread.is_alive(): #If the events is play
-        
+
             # signal the thread to stop
             self._stop_event.set()
 
             # attempt to stop the playback device directly for faster termination
             with self._device_lock:
-        
+
                 if self._device is not None: #If the device isnt none
-        
+
                     try: #Start try to stop
-                        
+
                         self._device.stop() #Stop device
-        
+
                     except Exception: #Except
-        
+
                         pass #Pass the error
 
             # wait for thread to exit
@@ -138,19 +183,37 @@ class AudioControl(): #Start AudioControl class
     #End of stop function
 
     def pause(self) -> None: #Pause the audio
-        
+
+        """
+
+        Pause the currently playing audio track.
+
+        """
+
         self._pause_event.set() #Set pause event
 
     #End pause function
 
     def resume(self) -> None: #Resume the audio
+
+        """
         
+        Resume playback after a pause.
+        
+        """
+
         self._pause_event.clear() #Clear pause event
 
     #End resume function
 
     def set_finished_callback(self, callback): #Set callback for when song finishes
-        
+
+        """
+
+        Register a callback to be invoked when playback finishes.
+
+        """
+
         self._on_finished_callback = callback #Store the callback
 
     #End set callback
